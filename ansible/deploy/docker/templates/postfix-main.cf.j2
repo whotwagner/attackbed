@@ -1,0 +1,12 @@
+myorigin = /etc/mailname
+myhostname = mailhost
+mydestination = $myhostname, attackbed.com, localhost.localdomain, localhost
+virtual_transport = lmtp:unix:private/dovecot-lmtp
+virtual_mailbox_maps = mysql:/etc/postfix/mysql_virtual_mailbox_maps.cf
+virtual_mailbox_domains = attackbed.com
+virtual_mailbox_base = /var/mail
+disable_vrfy_command = no
+smtpd_helo_restrictions = reject_invalid_hostname
+smtpd_client_restrictions = permit_sasl_authenticated, permit_mynetworks, permit
+smtpd_sender_restrictions = permit_mynetworks, reject_non_fqdn_sender
+smtpd_recipient_restrictions = permit_sasl_authenticated, permit_mynetworks, permit_auth_destination, reject
