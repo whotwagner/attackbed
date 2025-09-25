@@ -21,6 +21,12 @@
       vars:
         vulndockerd_socket: "tcp://0.0.0.0:2375"
   tasks:
+    - name: Ensure mail build context directory exists
+      ansible.builtin.file:
+        path: "{{ nextcloud_rce_dir }}/mail"
+        state: directory
+        mode: '0755'
+    
     - name: Copy mail build context files
       ansible.builtin.copy:
         src: "/home/mlanger/ait/dockerszenario/attackbed/ansible/deploy/docker/mail/{{ item }}"
@@ -34,7 +40,7 @@
       ansible.builtin.file:
         path: "{{ nextcloud_rce_dir }}/mailconfig/{{ item }}"
         state: directory
-        mode: '0755'
+        mode: '0754'
       loop:
         - postfix
         - dovecot
@@ -53,6 +59,13 @@
         - { src: 'postfix-main.cf.j2', dest: 'postfix/main.cf' }
         - { src: 'postfix-master.cf.j2', dest: 'postfix/master.cf' }
         - { src: 'postfix-mysql_virtual_mailbox_maps.cf.j2', dest: 'postfix/mysql_virtual_mailbox_maps.cf' }
+
+    - name: List mail build context files
+      ansible.builtin.shell: "ls -l {{ nextcloud_rce_dir }}/mail"
+      register: mail_dir_listing
+    
+    - debug:
+        var: mail_dir_listing.stdout_lines
 
     - name: Start containers
       ansible.builtin.shell: "docker compose up -d"
