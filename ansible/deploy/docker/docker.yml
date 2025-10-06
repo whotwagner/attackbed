@@ -30,7 +30,7 @@
     - name: Copy mail build context files
       ansible.builtin.copy:
         src: "/home/mlanger/ait/dockerszenario/attackbed/ansible/deploy/docker/mail/{{ item }}"
-        dest: "{{ nextcloud_rce_dir }}/mail/{{ item }}"
+        dest: "{{ nextcloud_rce_dir }}"
         mode: '0644'
       loop:
         - Dockerfile
@@ -52,6 +52,7 @@
         dest: "{{ nextcloud_rce_dir }}/mailconfig/{{ item.dest }}"
         mode: '0644'
       loop:
+        - { src: 'auth-sql-conf.ext.j2', dest: 'dovecot/conf.d/auth-sql-conf.ext' }
         - { src: 'dovecot-10-auth.conf.j2', dest: 'dovecot/conf.d/10-auth.conf' }
         - { src: 'dovecot-10-mail.conf.j2', dest: 'dovecot/conf.d/10-mail.conf' }
         - { src: 'dovecot-sql.conf.ext.j2', dest: 'dovecot/dovecot-sql.conf.ext' }

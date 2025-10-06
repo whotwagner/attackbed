@@ -34,7 +34,7 @@ services:
 
   mail:
     build:
-      context: ./mail
+      context: . 
     image: custom-mail:latest
     restart: always
     stdin_open: true
@@ -45,9 +45,12 @@ services:
       - ${PWD}/mailconfig/postfix/master.cf:/etc/postfix/master.cf
       - ${PWD}/mailconfig/postfix/mysql_virtual_mailbox_maps.cf:/etc/postfix/mysql_virtual_mailbox_maps.cf
       - ${PWD}/mailconfig/dovecot/dovecot-sql.conf.ext:/etc/dovecot/dovecot-sql.conf.ext
+      - ${PWD}/mailconfig/dovecot/conf.d/auth-sql-conf.ext:/etc/dovecot/conf.d/auth-sql-conf.ext
       - ${PWD}/mailconfig/dovecot/conf.d/10-auth.conf:/etc/dovecot/conf.d/10-auth.conf
       - ${PWD}/mailconfig/dovecot/conf.d/10-mail.conf:/etc/dovecot/conf.d/10-mail.conf
       - ${PWD}/mailconfig/dovecot/conf.d/10-master.conf:/etc/dovecot/conf.d/10-master.conf
+      - ./mail:/var/mail
+      - ./log:/var/log
     ports:
       - "143:143"
       - "587:587"
