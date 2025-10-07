@@ -49,7 +49,6 @@ services:
       - ${PWD}/mailconfig/dovecot/conf.d/10-auth.conf:/etc/dovecot/conf.d/10-auth.conf
       - ${PWD}/mailconfig/dovecot/conf.d/10-mail.conf:/etc/dovecot/conf.d/10-mail.conf
       - ${PWD}/mailconfig/dovecot/conf.d/10-master.conf:/etc/dovecot/conf.d/10-master.conf
-      - ./mail:/var/mail
       - ./log:/var/log
     ports:
       - "143:143"
