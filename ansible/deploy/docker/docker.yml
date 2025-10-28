@@ -3,21 +3,23 @@
   remote_user: aecid
   become: true
   roles:
-#    - role: aeciduser
-#      vars:
-#            # pass: aecid
-#            aeciduser_pass: "$6$9AqxTPJqYsFXwgPN$xAC4y1Vndk00EaBCuFcJC37BYDYYVAgt9SHymg15KSdKddZnwG.SsQaJvHarH4DYQj3tuboeLa4G5EfL7itcC0"
-#    - role: aecidtools
-#      vars:
-#            aecidtools_user: "aecid"
-#    - role: manage_unattended_upgrades
-#    - role: auditd
-    - role: atb-ansible-dockerce
-    - role: /home/mlanger/ait/dockerszenario/atb-ansible-nextcloudrce
+    - role: aeciduser
       vars:
+            # pass: aecid
+            aeciduser_pass: "$6$9AqxTPJqYsFXwgPN$xAC4y1Vndk00EaBCuFcJC37BYDYYVAgt9SHymg15KSdKddZnwG.SsQaJvHarH4DYQj3tuboeLa4G5EfL7itcC0"
+    - role: aecidtools
+      vars:
+            aecidtools_user: "aecid"
+    - role: manage_unattended_upgrades
+    - role: auditd
+    - role: atb-ansible-dockerce
+    - role: atb-ansible-nextcloudrce
+      vars:
+        nextcloud_rce_start_container: false  #Needed to prevent the start of containers at atb-ansible-nextcloudrce role before mail feature
         nextcloud_rce_domain: "localhost:8080"
+        nextcloud_mail_image: "ghcr.io/ait-testbed/attackbed/nextcloud-mail:1.0.0"
         nextcloud_rce_docker_compose_template: "docker-compose-mail.yml.j2"
-    - role: /home/mlanger/ait/dockerszenario/atb-ansible-vulndockerd
+    - role: atb-ansible-vulndockerd
       vars:
         vulndockerd_socket: "tcp://0.0.0.0:2375"
   tasks:
@@ -26,15 +28,6 @@
         path: "{{ nextcloud_rce_dir }}/mail"
         state: directory
         mode: '0755'
-    
-    - name: Copy mail build context files
-      ansible.builtin.copy:
-        src: "/home/mlanger/ait/dockerszenario/attackbed/ansible/deploy/docker/mail/{{ item }}"
-        dest: "{{ nextcloud_rce_dir }}"
-        mode: '0644'
-      loop:
-        - Dockerfile
-        - supervisord.conf
 
     - name: Ensure mailconfig directories exist
       ansible.builtin.file:
@@ -65,9 +58,6 @@
       ansible.builtin.shell: "ls -l {{ nextcloud_rce_dir }}/mail"
       register: mail_dir_listing
     
-    - debug:
-        var: mail_dir_listing.stdout_lines
-
     - name: Start containers
       ansible.builtin.shell: "docker compose up -d"
       args:
